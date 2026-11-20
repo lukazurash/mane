@@ -1,9 +1,6 @@
-# Mane — hair salon & barbershop demo
+# Mane: hair salon and barbershop
 
-Static demo site for a Tbilisi salon + barbershop (Georgian / English). Clients pick a service, a master, a date and a free time; the booking opens in the salon's WhatsApp, filled in. No backend.
+The site now lives at **https://lukazurashviliii.pythonanywhere.com/** (Flask, real booking diary and an admin panel). Its code is on branch `v2`.
 
-- Salon number: `WA_NUMBER` at the top of `app.js`.
-- Services, prices, durations, masters, opening hours: `SERVICES`, `MASTERS`, `OPEN`/`CLOSE` in `app.js`.
-- Photos: Unsplash (free license), in `img/`.
-
-Preview locally: `python -m http.server` and open http://localhost:8000.
+This branch (`main`, GitHub Pages) only sends the old demo link, lukazurash.github.io/mane/, to the live site.
+The old static demo files stay here for reference.
