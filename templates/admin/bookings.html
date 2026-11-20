@@ -1,0 +1,62 @@
+{% extends "admin/base.html" %}
+{% block title %}ჩაწერები{% endblock %}
+{% block main %}
+{% set wd = ('ორშაბათი', 'სამშაბათი', 'ოთხშაბათი', 'ხუთშაბათი', 'პარასკევი', 'შაბათი', 'კვირა') %}
+<div class="head">
+  <h1>ჩაწერები</h1>
+  <nav class="filters" aria-label="ხედი">
+    <a href="{{ url_for('admin_bookings', view='upcoming') }}" {% if view == 'upcoming' and not st %}aria-current="page"{% endif %}>დღეიდან</a>
+    <a href="{{ url_for('admin_bookings', view='all') }}" {% if view == 'all' and not st %}aria-current="page"{% endif %}>ყველა</a>
+    {% for s in statuses %}<a href="{{ url_for('admin_bookings', view=view, status=s) }}" {% if st == s %}aria-current="page"{% endif %}>{{ status_ka[s] }}</a>{% endfor %}
+  </nav>
+</div>
+
+<details class="card add">
+  <summary><h2>+ ჩაწერის დამატება (ტელეფონით ან ადგილზე)</h2></summary>
+  <p class="hint">ასე საიტი ამ დროს თავისუფლად აღარ აჩვენებს. დღევანდელი გასული დროც შეიძლება.</p>
+  <form class="form two" method="post" action="{{ url_for('admin_booking_add') }}">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <div><label for="a-service">მომსახურება</label>
+      <select id="a-service" name="service" required>{% for s in services_all %}<option value="{{ s.id }}">{{ s.name_ka }} · {{ s.mins }} წთ</option>{% endfor %}</select></div>
+    <div><label for="a-master">ოსტატი</label>
+      <select id="a-master" name="master"><option value="any">ნებისმიერი თავისუფალი</option>{% for m in masters_all %}<option value="{{ m.id }}">{{ m.name_ka }} ({{ 'ქალი' if m.cat == 'women' else 'ბარბერი' }})</option>{% endfor %}</select></div>
+    <div><label for="a-day">დღე</label><input id="a-day" name="day" type="date" min="{{ today }}" value="{{ today }}" required></div>
+    <div><label for="a-time">დრო</label><input id="a-time" name="time" type="time" step="300" required></div>
+    <div><label for="a-name">კლიენტის სახელი</label><input id="a-name" name="name" maxlength="60"></div>
+    <div><label for="a-phone">ტელეფონი</label><input id="a-phone" name="phone" maxlength="30" inputmode="tel"></div>
+    <div class="actions"><button class="btn" type="submit">დამატება</button></div>
+  </form>
+</details>
+
+{% if not days %}<p class="empty">ჩაწერები ჯერ არ არის. საიტიდან ჩაწერა აქ გამოჩნდება.</p>{% endif %}
+{% for d, rows in days.items() %}
+<section class="day">
+  {% set dd = d.split('-') %}
+  <h2 class="day__h">{{ dd[2] }}.{{ dd[1] }}{% if d == today %} · დღეს{% endif %} <span class="muted">{{ rows|length }} ჩაწერა</span></h2>
+  <div class="list">
+  {% for b in rows %}
+    <article class="card item status-{{ b.status }}">
+      <div class="item__top">
+        <h3>{{ b.start }} · {{ b.service }}</h3>
+        <span class="pill pill--{{ b.status }}">{{ status_ka[b.status] }}</span>
+      </div>
+      <dl class="facts">
+        <dt>ოსტატი</dt><dd><b>{{ b.master }}</b>{% if b.any_master %} <span class="muted">(კლიენტმა „ნებისმიერი“ აირჩია)</span>{% endif %}</dd>
+        <dt>კლიენტი</dt><dd>{{ b.name }}{% if b.phone %} · <a href="tel:{{ b.phone|replace(' ', '') }}">{{ b.phone }}</a>{% endif %}</dd>
+        {% if b.note %}<dt>კომენტარი</dt><dd>“{{ b.note }}”</dd>{% endif %}
+        <dt>ფასი</dt><dd>{{ b.price }} ₾{% if b.from_price %}-დან{% endif %} · ~{{ b.mins }} წთ</dd>
+        <dt>მიღებულია</dt><dd class="muted">#{{ b.id }} · {{ b.created[:16]|replace('T', ' ') }} · {{ 'საიტი, ' ~ ('ქართ.' if b.lang == 'ka' else 'ინგლ.') if b.source == 'site' else 'ადმინი' }}</dd>
+      </dl>
+      <form class="item__act" method="post" action="{{ url_for('admin_status', rid=b.id) }}">
+        <input type="hidden" name="csrf" value="{{ csrf }}">
+        <label class="sr" for="st-{{ b.id }}">სტატუსი</label>
+        <select id="st-{{ b.id }}" name="status" data-autosave>{% for s in statuses %}<option value="{{ s }}" {% if b.status == s %}selected{% endif %}>{{ status_ka[s] }}</option>{% endfor %}</select>
+        <button class="btn btn--quiet" type="submit">შენახვა</button>
+      </form>
+    </article>
+  {% endfor %}
+  </div>
+</section>
+{% endfor %}
+<p class="hint">„გაუქმდა“ სტატუსი დროს ათავისუფლებს და საიტი ისევ აჩვენებს მას. ნაჩვენებია მაქსიმუმ 400 ჩაწერა.</p>
+{% endblock %}

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ka">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>{% block title %}მართვა{% endblock %}: {{ S('shop_name') }}</title>
+<link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..600&family=Noto+Sans+Georgian:wght@400..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+<body>
+{% set status_ka = {'new': 'ახალი', 'confirmed': 'დადასტურდა', 'done': 'შესრულდა', 'noshow': 'არ მოვიდა', 'cancelled': 'გაუქმდა'} %}
+{% if session.admin %}
+<header class="bar">
+  <a class="bar__logo" href="{{ url_for('admin_bookings') }}"><svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="23" r="3.6"/><circle cx="23" cy="23" r="3.6"/><path d="M11.6 20.6 24 5M20.4 20.6 8 5"/></g></svg>{{ S('shop_name') }}</a>
+  <nav class="bar__nav" aria-label="მართვა">
+    {% set ep = request.endpoint %}
+    <a href="{{ url_for('admin_bookings') }}" {% if ep == 'admin_bookings' %}aria-current="page"{% endif %}>ჩაწერები{% if new_bookings %}<span class="badge">{{ new_bookings }}</span>{% endif %}</a>
+    <a href="{{ url_for('admin_services') }}" {% if ep == 'admin_services' %}aria-current="page"{% endif %}>მომსახურება</a>
+    <a href="{{ url_for('admin_masters') }}" {% if ep in ('admin_masters', 'admin_master') %}aria-current="page"{% endif %}>ოსტატები</a>
+    <a href="{{ url_for('admin_photos') }}" {% if ep == 'admin_photos' %}aria-current="page"{% endif %}>ფოტოები</a>
+    <a href="{{ url_for('admin_texts') }}" {% if ep == 'admin_texts' %}aria-current="page"{% endif %}>ტექსტები</a>
+    <a href="{{ url_for('admin_settings') }}" {% if ep == 'admin_settings' %}aria-current="page"{% endif %}>პარამეტრები</a>
+  </nav>
+  <div class="bar__end">
+    <a href="{{ url_for('home') }}" target="_blank" rel="noopener">საიტი ↗</a>
+    <form method="post" action="{{ url_for('admin_logout') }}"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="linkish" type="submit">გასვლა</button></form>
+  </div>
+</header>
+{% endif %}
+<main class="main">
+  {% with msgs = get_flashed_messages() %}{% if msgs %}<div class="flash" role="status">{% for m in msgs %}<p>{{ m }}</p>{% endfor %}</div>{% endif %}{% endwith %}
+  {% block main %}{% endblock %}
+</main>
+<script>
+// a status select saves as soon as it changes; the button stays for keyboards and no-script
+document.querySelectorAll('select[data-autosave]').forEach(s => s.addEventListener('change', () => s.form.requestSubmit()));
+// a photo field shows the picked file before it is saved
+document.querySelectorAll('input[type=file][data-preview]').forEach(i => i.addEventListener('change', () => {
+  const img = document.getElementById(i.dataset.preview); const f = i.files[0];
+  if (img && f) { img.src = URL.createObjectURL(f); img.hidden = false; }
+}));
+// ask before deleting
+document.querySelectorAll('form[data-confirm]').forEach(f => f.addEventListener('submit', e => { if (!confirm(f.dataset.confirm)) e.preventDefault(); }));
+</script>
+</body>
+</html>

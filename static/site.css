@@ -1,0 +1,101 @@
+/* Mane: page CSS only where the kit has no rule (system.md). Tokens come from system.css. */
+
+/* the salon's mark beside the name, in the nav and the footer */
+.nav__logo { gap: var(--s-2); }
+.scissors { width: 24px; height: 24px; flex: none; color: var(--accent); }
+.ground-brand .scissors { color: currentColor; }
+
+/* Georgian has no capitals and runs long: let headings break between words only */
+:root:lang(ka) :is(h1, h2, h3) { hyphens: manual; overflow-wrap: break-word; }
+.nav__actions .nav__link[lang] { font-weight: 500; }
+
+/* the hero's live line: the next free time, with a small green light */
+.hero-notice { display: inline-flex; align-items: center; gap: var(--s-2); }
+.hero-notice .dot { width: 8px; height: 8px; border-radius: 50%; background: #2f8a4c; box-shadow: 0 0 0 3px rgb(47 138 76 / .18); }
+
+/* ---------------------------------------------------------------- services: two price lists, women and men */
+.menus { row-gap: var(--s-8); }
+.menu__pic { margin: 0 0 var(--s-5); overflow: clip; border-radius: var(--r-lg); }
+.menu__pic > img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; max-height: 60svh; object-fit: cover; }
+.menu__h { font-size: var(--t-h3, 1.5rem); margin: 0 0 var(--s-3); }
+.menu__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-strong); }
+.menu__list > li { border-bottom: 1px solid var(--line); }
+.menu__row { display: grid; grid-template-columns: 1fr auto; column-gap: var(--s-4); row-gap: 2px; padding: var(--s-3) 0;
+             min-height: 44px; color: inherit; text-decoration: none; transition: padding var(--dur) var(--ease); }
+.menu__name { font-weight: 500; }
+.menu__price { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 500; }
+.menu__desc { grid-column: 1 / -1; color: var(--muted); font-size: var(--t-small); }
+@media (hover: hover) and (pointer: fine) {
+  html:not([data-motion="off"]) .menu__row:hover { padding-left: var(--s-2); }
+  .menu__row:hover .menu__name { text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--accent); }
+}
+.menu__row:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
+
+/* ---------------------------------------------------------------- team: four masters */
+.team { row-gap: var(--s-7); }
+.member { display: grid; align-content: start; gap: var(--s-2); }
+.member__face { aspect-ratio: 4 / 5; border-radius: var(--r-lg); overflow: clip; display: grid; place-items: center;
+                background: color-mix(in srgb, var(--face) 22%, var(--p-surface)); margin-bottom: var(--s-3); }
+.member__face > span { font: 400 clamp(4rem, 8vw, 6.5rem)/1 var(--font-display); color: var(--face); }
+.member__face > img { width: 100%; height: 100%; object-fit: cover; }
+.member h3 { margin: 0; font-size: var(--t-card); }
+.member__role { margin: 0; color: var(--accent); font-weight: 500; }
+.member__about { margin: 0 0 var(--s-2); color: var(--muted); }
+
+/* ---------------------------------------------------------------- the booking form */
+.booking { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-7); align-items: start;
+           padding: 40px; background: var(--p-surface); border-radius: var(--r-lg); }
+.booking__pick, .booking__time { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5) var(--s-4); align-content: start; }
+.booking :is(input, select) { background: var(--p-bg); }
+.booking .field--full { grid-column: 1 / -1; }
+.choices { margin: 0; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.choices legend { padding: 0; margin-bottom: var(--s-2); }
+.choice { position: relative; display: inline-flex; align-items: center; gap: var(--s-2); min-height: 44px; padding: 0 var(--s-4);
+          border: 1px solid var(--line-strong); border-radius: var(--r-btn); background: var(--p-bg); font-weight: 400;
+          font-size: var(--t-body); cursor: pointer; transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease); }
+.choice[hidden] { display: none; }
+.choice input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.choice i { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font: 500 12px/1 var(--font-text);
+            font-style: normal; color: #fff; background: var(--face); margin-left: calc(-1 * var(--s-2)); }
+.choice:has(input:checked) { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.choice:has(input:focus-visible) { outline: 2px solid var(--action); outline-offset: 2px; }
+.slots__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: var(--s-2); width: 100%; }
+.choice--time { justify-content: center; padding: 0; font-variant-numeric: tabular-nums; }
+.slots[aria-busy="true"] .slots__grid { opacity: .45; transition: opacity 120ms var(--ease); }
+.slots__none { margin: 0; color: var(--muted); }
+.booking__foot { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); flex-wrap: wrap; }
+.booking__sum { margin: 0; font-variant-numeric: tabular-nums; font-weight: 500; min-height: 1.5em; }
+.booking .form__status, .booking .t-small { grid-column: 1 / -1; margin: 0; }
+.form__status a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+
+/* the brand band (colour-band close): the brass darkened until every word on it passes 7:1 */
+footer.closing.ground-brand { --p-accent: #4a3519; }
+footer.closing.ground-brand .muted { color: var(--ink); }
+footer.closing.ground-brand .link { color: var(--ink); }
+footer.closing .close__word { line-height: 1; overflow: visible; padding-top: .04em; }
+.footer__ways { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); }
+
+/* ---------------------------------------------------------------- inner pages (privacy, credits, errors) */
+.page { padding: calc(var(--nav) + var(--s-8)) 0 var(--s-9); min-height: 70svh; }
+.page h1 { font-size: var(--t-h2); margin: 0 0 var(--s-5); }
+.page__list { padding-left: 1.2em; display: grid; gap: var(--s-3); }
+
+/* a tablet: the team two by two, the form in one column */
+@media (max-width: 1023px) {
+  .team > .member { grid-column: span 6; }
+  .booking { grid-template-columns: minmax(0, 1fr); }
+}
+/* a phone: one column; the form opens on the page ground */
+@media (max-width: 639px) {
+  footer.closing .close__word { display: none; }
+  .booking { padding: 0; background: none; border-radius: 0; }
+  .booking :is(input, select), .choice { background: var(--p-surface); }
+  .booking__pick, .booking__time { grid-template-columns: minmax(0, 1fr); }
+  .booking__foot .btn { width: 100%; }
+  .member__face { aspect-ratio: 1; }
+  .member__about { display: none; }
+  .team { row-gap: var(--s-5); }
+  .menu__pic > img { aspect-ratio: 2 / 1; }
+  footer.closing .closing__links .link { display: flex; width: 100%; }
+  main > #visit-story[data-moment]:not(.is-live) { height: auto; }
+}

@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ m.name_ka if m else 'ახალი ოსტატი' }}{% endblock %}
+{% block main %}
+{% set v = form or m or {} %}
+<div class="head">
+  <h1>{{ m.name_ka if m else 'ახალი ოსტატი' }}</h1>
+  <a href="{{ url_for('admin_masters') }}">← ყველა ოსტატი</a>
+</div>
+<form class="card form" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="csrf" value="{{ csrf }}">
+  <div class="photo-field">
+    {% if m and m.photo %}{{ pic(m.photo, '', '320px', 'photo-field__img', attrs='id="m-preview"') }}{% else %}<img id="m-preview" class="photo-field__img" alt="" hidden>{% endif %}
+    <div>
+      <label for="photo">ფოტო (არასავალდებულო){% if m and m.photo %}: ახალი ჩაანაცვლებს ძველს{% endif %}</label>
+      <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" data-preview="m-preview">
+      <p class="hint">ვერტიკალური (4:5) პორტრეტი, დღის შუქზე. ფოტოს გარეშე საიტი აჩვენებს სახელის პირველ ასოს ფერად ფონზე.</p>
+      {% if m and m.photo %}<label class="check"><input type="checkbox" name="remove_photo"> ფოტოს მოხსნა</label>{% endif %}
+    </div>
+  </div>
+  <div class="two">
+    <div><label for="name_ka">სახელი (ქართ.)</label><input id="name_ka" name="name_ka" maxlength="40" required value="{{ v.name_ka or '' }}"></div>
+    <div><label for="name_en">სახელი (ინგლ.)</label><input id="name_en" name="name_en" maxlength="40" value="{{ v.name_en or '' }}"></div>
+    <div><label for="role_ka">როლი (ქართ.)</label><input id="role_ka" name="role_ka" maxlength="40" value="{{ v.role_ka or '' }}" placeholder="სტილისტი"></div>
+    <div><label for="role_en">როლი (ინგლ.)</label><input id="role_en" name="role_en" maxlength="40" value="{{ v.role_en or '' }}" placeholder="Stylist"></div>
+    <div><label for="about_ka">რაში არის ძლიერი (ქართ.)</label><input id="about_ka" name="about_ka" maxlength="120" value="{{ v.about_ka or '' }}"></div>
+    <div><label for="about_en">რაში არის ძლიერი (ინგლ.)</label><input id="about_en" name="about_en" maxlength="120" value="{{ v.about_en or '' }}"></div>
+    <div><label for="cat">ვის ემსახურება</label>
+      <select id="cat" name="cat"><option value="women" {% if v.cat == 'women' %}selected{% endif %}>ქალი (სალონი)</option><option value="men" {% if v.cat == 'men' %}selected{% endif %}>კაცი (ბარბერი)</option></select></div>
+    <div><label for="color">ფერი (ფოტოს გარეშე)</label><input id="color" name="color" type="color" value="{{ v.color or '#5a4a3f' }}"></div>
+    <div><label for="sort">რიგითობა</label><input id="sort" name="sort" type="number" inputmode="numeric" value="{{ v.sort if v.sort is not none else 0 }}"></div>
+    <div class="checks"><label class="check"><input type="checkbox" name="active" {% if (form and form.get('active')) or (not form and (not m or m.active)) %}checked{% endif %}> ჩანს საიტზე და იღებს ჩაწერას</label></div>
+  </div>
+  <div class="actions"><button class="btn" type="submit">შენახვა</button></div>
+</form>
+{% if m %}
+<form class="danger" method="post" action="{{ url_for('admin_master_delete', mid=m.id) }}" data-confirm="წავშალო „{{ m.name_ka }}“? ამას ვეღარ დააბრუნებ.">
+  <input type="hidden" name="csrf" value="{{ csrf }}">
+  <button class="btn btn--danger" type="submit">ოსტატის წაშლა</button>
+  <span class="hint">დროებით (შვებულება, ავადმყოფობა) სჯობს მოხსნა „ჩანს საიტზე“.</span>
+</form>
+{% endif %}
+{% endblock %}

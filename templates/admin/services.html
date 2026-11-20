@@ -1,0 +1,44 @@
+{% extends "admin/base.html" %}
+{% block title %}მომსახურება{% endblock %}
+{% block main %}
+<div class="head"><h1>მომსახურება და ფასები</h1></div>
+<p class="hint">რიგითობა აქ ზემოდან ქვემოთაა. „-დან“ ნიშნავს, რომ ფასი თმის სიგრძეზეა დამოკიდებული (საიტზე: „120 ₾-დან“). წუთები განსაზღვრავს, რამდენ ხანს დაიკავებს ოსტატს.</p>
+<form class="card form" method="post">
+  <button type="submit" class="sr" tabindex="-1" aria-hidden="true">შენახვა</button>
+  <input type="hidden" name="csrf" value="{{ csrf }}">
+  <div class="svc">
+  {% for s in rows %}
+    <fieldset class="svc__row{% if not s.active %} is-off{% endif %}">
+      <legend class="sr">{{ s.name_ka }}</legend>
+      <input type="hidden" name="id" value="{{ s.id }}">
+      <select name="cat" aria-label="ჯგუფი"><option value="women" {% if s.cat == 'women' %}selected{% endif %}>ქალი</option><option value="men" {% if s.cat == 'men' %}selected{% endif %}>კაცი</option></select>
+      <input name="name_ka" value="{{ s.name_ka }}" maxlength="60" aria-label="სახელი ქართულად" placeholder="სახელი (ქართ.)">
+      <input name="name_en" value="{{ s.name_en }}" maxlength="60" aria-label="სახელი ინგლისურად" placeholder="Name (English)">
+      <input name="desc_ka" value="{{ s.desc_ka }}" maxlength="120" aria-label="აღწერა ქართულად" placeholder="აღწერა (ქართ.)">
+      <input name="desc_en" value="{{ s.desc_en }}" maxlength="120" aria-label="აღწერა ინგლისურად" placeholder="Line (English)">
+      <label>₾ <input name="price" value="{{ s.price }}" inputmode="numeric" maxlength="5" aria-label="ფასი"></label>
+      <select name="from_price" aria-label="ფასის სახე"><option value="0">ზუსტი</option><option value="1" {% if s.from_price %}selected{% endif %}>-დან</option></select>
+      <label>წთ <input name="mins" value="{{ s.mins }}" inputmode="numeric" maxlength="3" aria-label="წუთები"></label>
+      <select name="active" aria-label="ჩანს საიტზე"><option value="1">ჩანს</option><option value="0" {% if not s.active %}selected{% endif %}>დამალული</option></select>
+      <button class="btn btn--quiet" form="del-{{ s.id }}" type="submit" aria-label="წაშლა: {{ s.name_ka }}">წაშლა</button>
+    </fieldset>
+  {% endfor %}
+    <fieldset class="svc__row svc__row--new">
+      <legend class="sr">ახალი მომსახურება</legend>
+      <input type="hidden" name="id" value="new">
+      <select name="cat" aria-label="ჯგუფი"><option value="women">ქალი</option><option value="men">კაცი</option></select>
+      <input name="name_ka" maxlength="60" aria-label="ახალი მომსახურება ქართულად" placeholder="ახალი მომსახურება">
+      <input name="name_en" maxlength="60" aria-label="ახალი მომსახურება ინგლისურად" placeholder="New service">
+      <input name="desc_ka" maxlength="120" aria-label="აღწერა ქართულად" placeholder="აღწერა (ქართ.)">
+      <input name="desc_en" maxlength="120" aria-label="აღწერა ინგლისურად" placeholder="Line (English)">
+      <label>₾ <input name="price" inputmode="numeric" maxlength="5" aria-label="ფასი" placeholder="40"></label>
+      <select name="from_price" aria-label="ფასის სახე"><option value="0">ზუსტი</option><option value="1">-დან</option></select>
+      <label>წთ <input name="mins" inputmode="numeric" maxlength="3" aria-label="წუთები" placeholder="45"></label>
+      <select name="active" aria-label="ჩანს საიტზე"><option value="1">ჩანს</option><option value="0">დამალული</option></select>
+      <span></span>
+    </fieldset>
+  </div>
+  <div class="actions actions--sticky"><button class="btn" type="submit">შენახვა</button></div>
+</form>
+{% for s in rows %}<form id="del-{{ s.id }}" method="post" data-confirm="წავშალო „{{ s.name_ka }}“? ძველი ჩაწერები სიაში დარჩება."><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="delete" value="{{ s.id }}"></form>{% endfor %}
+{% endblock %}
